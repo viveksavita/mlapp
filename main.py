@@ -1,8 +1,6 @@
 # Put the code for your API here.
 
 
-
-
 import pickle
 import pandas as pd
 from typing import Union,List
@@ -10,9 +8,6 @@ from fastapi import  FastAPI
 from ml.data import process_data
 from pydantic import BaseModel, Field
 from ml.model import inference
-
-import json
-from json import JSONEncoder
 
 
 
@@ -90,9 +85,5 @@ async def update_item(input: List[Input]):
 
         prediction = pd.DataFrame(output, columns=["salary"])
         prediction = prediction.to_dict('list')
-
-
-
-
 
     return  prediction
