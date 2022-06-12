@@ -5,15 +5,18 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+env:
+      BUCKET_NAME : "mlapp-bckt"
+      AWS_REGION : "us-east-2"
+permissions:
+      id-token: write
+      contents: read
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-
+    
     steps:
     - uses: actions/checkout@v2
     - uses: iterative/setup-dvc@v1
