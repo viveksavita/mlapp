@@ -15,22 +15,29 @@ df = pd.read_csv("./data/census.csv")
 #print(df.columns) 
 #print(df[" salary"])
 
-df = df.rename(columns={"age":"age", 
-" workclass":"workclass",
-" fnlgt":"fnlgt",
-" education":'education', 
-' education-num': 'education-num',
- ' marital-status':'marital-status', 
- ' occupation' :'occupation', 
- ' relationship': 'relationship', 
- ' race':'race', 
- ' sex' :'sex',
-  ' capital-gain':'capital-gain', 
-  ' capital-loss':'capital-loss', 
- ' hours-per-week':'hours-per-week', 
-  ' native-country':'native-country',
-       ' salary': 'salary'})
+df = df.rename(columns={
+    "age":"age", 
+    " workclass":"workclass",
+    " fnlgt":"fnlgt",
+    " education":'education', 
+    ' education-num': 'education-num',
+    ' marital-status':'marital-status', 
+    ' occupation' :'occupation', 
+    ' relationship': 'relationship', 
+    ' race':'race', 
+    ' sex' :'sex',
+    ' capital-gain':'capital-gain', 
+    ' capital-loss':'capital-loss', 
+    ' hours-per-week':'hours-per-week', 
+    ' native-country':'native-country',
+    ' salary': 'salary'
+    })
 print(df.columns) 
+
+df = df.drop_duplicates()
+df.to_csv("./data/cleaned_data.csv")
+
+
 
 # Optional enhancement, use K-fold cross validation instead of a train-test split.
 train, test = train_test_split(df, test_size=0.20)
@@ -44,11 +51,16 @@ cat_features = [
     "relationship",
     "race",
     "sex",
-    "native-country",
-]
+    "native-country"]
 X_train, y_train, encoder, lb = process_data(
     train, categorical_features=cat_features, label="salary", training=True
 )
+
+with open("./model/encoder", "wb") as f: 
+    pickle.dump(encoder ,f)
+
+with open("./model/lb", "wb") as f: 
+    pickle.dump(lb, f)
 
 # Proces the test data with the process_data function.
 
