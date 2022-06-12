@@ -1,16 +1,28 @@
 # Put the code for your API here.
 
-from typing import Union
 
-from fastapi import Body, FastAPI
-from pydantic import BaseModel, Field
+
+
 import pickle
-from ml.data import process_data
-from ml.model import train_model , inference, compute_model_metrics
 import pandas as pd
+from typing import Union,List
+from fastapi import  FastAPI
+from ml.data import process_data
+from pydantic import BaseModel, Field
+from ml.model import inference, compute_model_metrics
+
+import json
+from json import JSONEncoder
+
+
 
 # Instantiate the app.
 app = FastAPI()
+
+
+@app.get("/")
+async def say_hello():
+    return {"greeting": "Welcome!"}
 
 class Input(BaseModel):
     age : int = Field(example=32)
@@ -29,50 +41,58 @@ class Input(BaseModel):
     native_country : str= Field(example="Cube")
 
 
-@app.post("/items")
-async def update_item(input: Input):
+@app.post("/predict")
+async def update_item(input: List[Input]):
+    output = []
+    for data in input:
+        model = pickle.load(open("./model/logisticRegression.sav", 'rb'))
+        encoder = pickle.load(open("./model/encoder", 'rb'))
+        lb = pickle.load(open("./model/lb", 'rb'))
+
+        cat_features = [
+        "workclass",
+        "education",
+        "marital_status",
+        "occupation",
+        "relationship",
+        "race",
+        "sex",
+        "native_country"]
+        
+        
+        value_dict= data.__dict__
+
+
+        X = pd.DataFrame([value_dict], columns=[
+        "age", 
+        "workclass",
+        "fnlgt",
+        'education', 
+        'education_num',
+    'marital_status', 
+        'occupation', 
+        'relationship', 
+        'race', 
+        'sex',
+        'capital_gain', 
+        'capital_loss', 
+        'hours_per_week', 
+        'native_country'])
+
     
-    model = pickle.load(open("./model/logisticRegression.sav", 'rb'))
-    encoder = pickle.load(open("./model/encoder", 'rb'))
-    lb = pickle.load(open("./model/lb", 'rb'))
 
-    cat_features = [
-    "workclass",
-    "education",
-    "marital_status",
-    "occupation",
-    "relationship",
-    "race",
-    "sex",
-     "native_country"]
-    
-    
-    value_dict= input.__dict__
+        X_processed, y, encoder, lb = process_data(X, categorical_features=cat_features, 
+        training=False, encoder=encoder, lb=lb)
+        
+        preds = inference(model, X_processed)
+        result = lb.inverse_transform(preds[0])
+        output.append(result)
 
-
-    X = pd.DataFrame([value_dict], columns=[
-    "age", 
-    "workclass",
-    "fnlgt",
-    'education', 
-    'education_num',
-   'marital_status', 
-    'occupation', 
-    'relationship', 
-    'race', 
-    'sex',
-    'capital_gain', 
-    'capital_loss', 
-    'hours_per_week', 
-    'native_country'])
-
-   
-
-    X_processed, y, encoder, lb = process_data(X, categorical_features=cat_features, 
-     training=False, encoder=encoder, lb=lb)
-    
-    preds = inference(model, X_processed)
+        prediction = pd.DataFrame(output, columns=["salary"])
+        prediction = prediction.to_dict('list')
 
 
 
-    return  preds[0].tolist()
+
+
+    return  prediction
