@@ -22,7 +22,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        role-to-assume: arn:aws:iam::908827482875:user/viveksavita
+        role-to-assume: arn:aws:sts::908827482875:assumed-role/voclabs/user1927289=6616368610
         aws-region: us-east-2
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
