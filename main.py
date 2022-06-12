@@ -9,7 +9,7 @@ from typing import Union,List
 from fastapi import  FastAPI
 from ml.data import process_data
 from pydantic import BaseModel, Field
-from ml.model import inference, compute_model_metrics
+from ml.model import inference
 
 import json
 from json import JSONEncoder
