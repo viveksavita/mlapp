@@ -14,6 +14,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: iterative/setup-dvc@v1
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: arn:aws:iam::908827482875:user/viveksavita
+        aws-region: us-east-2
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
