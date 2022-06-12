@@ -65,3 +65,17 @@ precision, recall, fbeta = compute_model_metrics(y_test, preds)
 
 
 # Train and save a model.
+
+def slice_performance(X,cat_features, lab,encode,lb,feature="education"):
+    model = pickle.load(open("./model/logisticRegression.sav", 'rb'))
+    for cls in X[feature].unique():
+        df_temp = X[X[feature] == cls]
+        X_test, y_test, encoder, lb = process_data(X, categorical_features=cat_features, 
+        label=lab, training=False, encoder=encode, lb=lb)
+        preds = inference(model, X_test)
+        precision, recall, fbeta = compute_model_metrics(y_test, preds)
+
+        with open("slice_output.txt", "a") as f:
+            print(f" Score for {cls} : Precision:{precision} , Recall:{recall} ,fbeta:{fbeta}", file=f)
+
+slice_performance(train,cat_features,"salary",encoder,lb,feature="education")
