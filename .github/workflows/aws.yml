@@ -1,11 +1,13 @@
 name: Example pipeline
 on:
+ push:
+  branches: [master]
  pull_request:
    branches: [master]
 
 permissions:
  id-token: write
- contents: read# This is required for actions/checkout@v2
+ contents: read
 
 jobs:
  pull_request:
