@@ -1,31 +1,19 @@
-name: Example pipeline
+name: Example
 on:
  push:
-  branches: [master]
+  branches: [ master ]
+ 
  pull_request:
-   branches: [master]
-
-permissions:
- id-token: write
- contents: read
-
+   branches: [ master ]
+ 
 jobs:
  pull_request:
    runs-on: ubuntu-latest
-
+ 
    env:
-     AWS_DEFAULT_REGION: us-east-1
-
+     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_DEV_KEY_ID }}
+     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_DEV_SECRET }}
+ 
    steps:
-   - name: configureawscredentials
-     uses: aws-actions/configure-aws-credentials@v1
-     with:
-       role-to-assume: arn:aws:iam::298848018041:role/my-github-role
-       role-session-name: samplerolesession
-       aws-region: ${{env.AWS_DEFAULT_REGION}}
-
    - name: Checkout
      uses: actions/checkout@v2
-     #test
-
- 
