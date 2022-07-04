@@ -9,7 +9,7 @@ from ml.model import train_model , inference, compute_model_metrics
 import sklearn
 import pickle
 import os
-
+import json
 
 # Import our app from main.py.
 from main import app
@@ -32,6 +32,57 @@ def test_api_locally_get_root():
 def test_post_predict():
     r = client.post("/predict")
     assert r.status_code != 200
+
+
+
+
+def test_inference_post_1():
+    data = {
+    "age": 32,
+    "workclass": "Private",
+    "fnlgt": 338409,
+    "education": "Bachelors",
+    "education_num": 13,
+    "marital_status": "Married-civ-spouse",
+    "occupation": "Prof-specialty",
+    "relationship": "Wife",
+    "race": "White",
+    "sex": "Male",
+    "capital_gain": 0,
+    "capital_loss": 0,
+    "hours_per_week": 38,
+    "native_country": "Cube"
+  }
+    r = client.post("/predict", data=json.dumps(data))
+    assert r.status_code == 200
+    assert r.json() == {"salary": " <=50K"}
+
+
+def test_inference_post_2():
+    data = {
+    "age": 42,
+    "workclass": "Private",
+    "fnlgt": 191765,
+    "education": "HS-grad",
+    "education_num": 9,
+    "marital_status": "Never-married",
+    "occupation": "Adm-clerical",
+    "relationship": "Other-relative",
+    "race": "Black",
+    "sex": "Female",
+    "capital_gain": 0,
+    "capital_loss": 2339,
+    "hours_per_week": 40,
+    "native_country": "Trinadad&Tobago"
+  }
+    r = client.post("/predict", data=json.dumps(data))
+    assert r.status_code == 200
+    assert r.json() == {"salary": " >50K"}
+
+
+
+  
+
 
 def test_process_data(data):
     cat_features = [

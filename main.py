@@ -8,6 +8,7 @@ from fastapi import  FastAPI
 from ml.data import process_data
 from pydantic import BaseModel, Field
 from ml.model import inference
+from fastapi.encoders import jsonable_encoder
 
 
 
@@ -36,53 +37,40 @@ class Input(BaseModel):
     native_country : str= Field(example="Cube")
 
 @app.post("/predict")
-async def update_item(input: List[Input]):
+async def update_item(input: Input):
     output = []
-    for data in input:
-        model = pickle.load(open("./model/logisticRegression.sav", 'rb'))
-        encoder = pickle.load(open("./model/encoder", 'rb'))
-        lb = pickle.load(open("./model/lb", 'rb'))
+    json_compatible_item_data = jsonable_encoder(input)
 
-        cat_features = [
-        "workclass",
-        "education",
-        "marital_status",
-        "occupation",
-        "relationship",
-        "race",
-        "sex",
-        "native_country"]
+    model = pickle.load(open("./model/logisticRegression.sav", 'rb'))
+    encoder = pickle.load(open("./model/encoder", 'rb'))
+    lb = pickle.load(open("./model/lb", 'rb'))
+
+    cat_features = [
+    "workclass",
+    "education",
+    "marital_status",
+    "occupation",
+    "relationship",
+    "race",
+    "sex",
+    "native_country"]
         
         
-        value_dict= data.__dict__
+    value_dict= json_compatible_item_data
+
+    X = pd.DataFrame([value_dict])
 
 
-        X = pd.DataFrame([value_dict], columns=[
-        "age", 
-        "workclass",
-        "fnlgt",
-        'education', 
-        'education_num',
-    'marital_status', 
-        'occupation', 
-        'relationship', 
-        'race', 
-        'sex',
-        'capital_gain', 
-        'capital_loss', 
-        'hours_per_week', 
-        'native_country'])
-
+    X_processed, y, encoder, lb = process_data(X, categorical_features=cat_features, 
+    training=False, encoder=encoder, lb=lb)
     
+    preds = inference(model, X_processed)
+    print(preds)
+    result = lb.inverse_transform(preds[0])
+    output.append(result)
 
-        X_processed, y, encoder, lb = process_data(X, categorical_features=cat_features, 
-        training=False, encoder=encoder, lb=lb)
-        
-        preds = inference(model, X_processed)
-        result = lb.inverse_transform(preds[0])
-        output.append(result)
-
-        prediction = pd.DataFrame(output, columns=["salary"])
-        prediction = prediction.to_dict('list')
-
-    return  prediction
+    prediction = pd.DataFrame(output, columns=["salary"])
+    print(prediction.to_dict())
+    prediction = prediction.to_dict('records')
+    #json_result = jsonable_encoder(prediction[0])
+    return prediction[0]
