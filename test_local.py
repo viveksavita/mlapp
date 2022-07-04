@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 from ml.model import train_model , inference, compute_model_metrics
 import sklearn
 import pickle
+import os
 
 
 # Import our app from main.py.
@@ -18,7 +19,7 @@ client = TestClient(app)
 
 @pytest.fixture
 def data():
-    df = pd.read_csv("./data/cleaned_data.csv")
+    df = pd.read_csv(os.path.join(os.getcwd(),"/data/cleaned_data.csv"))
 
     return df
 
@@ -76,8 +77,8 @@ def test_inference(data):
 
 
 def test_compute_model_metrics(data):
-    model = pickle.load(open("./model/logisticRegression.sav", 'rb'))
-    encoder = pickle.load(open("./model/encoder", 'rb'))
+    model = pickle.load(open(os.path.join(os.getcwd(),"/model/logisticRegression.sav"), 'rb'))
+    encoder = pickle.load(open(os.path.join(os.getcwd(),"/model/encoder"), 'rb'))
     lb = pickle.load(open("./model/lb", 'rb'))
 
     cat_features = [
