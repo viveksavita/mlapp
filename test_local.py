@@ -19,7 +19,7 @@ client = TestClient(app)
 
 @pytest.fixture
 def data():
-    df = pd.read_csv(os.path.join(os.getcwd(),"/data/cleaned_data.csv"))
+    df = pd.read_csv(os.path.join(os.getcwd(),"data/cleaned_data.csv"))
 
     return df
 
@@ -53,9 +53,9 @@ def test_process_data(data):
     assert isinstance(lb, sklearn.preprocessing._label.LabelBinarizer)
     
 def test_inference(data):
-    model = pickle.load(open("./model/logisticRegression.sav", 'rb'))
-    encoder = pickle.load(open("./model/encoder", 'rb'))
-    lb = pickle.load(open("./model/lb", 'rb'))
+    model = pickle.load(open(os.path.join(os.getcwd(),"model/logisticRegression.sav"), 'rb'))
+    encoder = pickle.load(open(os.path.join(os.getcwd(),"model/encoder"), 'rb'))
+    lb = pickle.load(open(os.path.join(os.getcwd(),"model/lb"), 'rb'))
 
     cat_features = [
     "workclass",
@@ -77,9 +77,9 @@ def test_inference(data):
 
 
 def test_compute_model_metrics(data):
-    model = pickle.load(open(os.path.join(os.getcwd(),"/model/logisticRegression.sav"), 'rb'))
-    encoder = pickle.load(open(os.path.join(os.getcwd(),"/model/encoder"), 'rb'))
-    lb = pickle.load(open("./model/lb", 'rb'))
+    model = pickle.load(open(os.path.join(os.getcwd(),"model/logisticRegression.sav"), 'rb'))
+    encoder = pickle.load(open(os.path.join(os.getcwd(),"model/encoder"), 'rb'))
+    lb = pickle.load(open(os.path.join(os.getcwd(),"model/lb"), 'rb'))
 
     cat_features = [
     "workclass",
