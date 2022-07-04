@@ -12,9 +12,6 @@ import pickle
 
 df = pd.read_csv("./data/census.csv")
 
-#print(df.columns) 
-#print(df[" salary"])
-
 df = df.rename(columns={
     "age":"age", 
     " workclass":"workclass",
@@ -35,7 +32,7 @@ df = df.rename(columns={
 print(df.columns) 
 
 df = df.drop_duplicates()
-df.to_csv("./data/cleaned_data.csv")
+df.to_csv("./data/cleaned_data.csv", index=False)
 
 
 
@@ -52,6 +49,7 @@ cat_features = [
     "race",
     "sex",
     "native-country"]
+    
 X_train, y_train, encoder, lb = process_data(
     train, categorical_features=cat_features, label="salary", training=True
 )
@@ -65,7 +63,10 @@ with open("./model/lb", "wb") as f:
 # Proces the test data with the process_data function.
 
 X_test, y_test, encoder, lb = process_data(
-    test, categorical_features=cat_features, label="salary", training=False, encoder=encoder, lb=lb
+    test, categorical_features=cat_features, label="salary", 
+    training=False, 
+    encoder=encoder, 
+    lb=lb
 )
 
 model = train_model(X_train,y_train)
@@ -76,7 +77,6 @@ preds = inference(model, X_test)
 precision, recall, fbeta = compute_model_metrics(y_test, preds)
 
 
-# Train and save a model.
 
 def slice_performance(X,cat_features, lab,encode,lb,feature="education"):
     model = pickle.load(open("./model/logisticRegression.sav", 'rb'))
@@ -89,5 +89,6 @@ def slice_performance(X,cat_features, lab,encode,lb,feature="education"):
 
         with open("slice_output.txt", "a") as f:
             print(f" Score for {cls} : Precision:{precision} , Recall:{recall} ,fbeta:{fbeta}", file=f)
+
 
 slice_performance(train,cat_features,"salary",encoder,lb,feature="education")
