@@ -35,7 +35,6 @@ class Input(BaseModel):
     hours_per_week :float= Field(example=38)
     native_country : str= Field(example="Cube")
 
-
 @app.post("/predict")
 async def update_item(input: List[Input]):
     output = []
