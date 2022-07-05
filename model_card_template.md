@@ -28,11 +28,20 @@ Evaluation data is 20% of the source dataset and generate by using train and tes
 
 ## Metrics
 
-Precision and recall are used to determine the effectiveness of the model to correctly classify the neagtive and positive classes. Confusion matrix is used to identify the true positive and true negative values of prediction of classes.
+Precision and recall are used to determine the effectiveness of the model to correctly classify the neagtive and positive classes. Confusion matrix is used to identify the true positive and true negative values of prediction of classes. Observed values for the evaluation metrics are : 
+
+Precision:0.71
+Recall:0.26 
+fbeta:0.38
+
+
 
 ## Ethical Considerations
 
 No special treatment and bias inducted in the training process of the model on the basis of individual specific attributes such as race, sex , marital status ..etc
+
+__Data__: Model does not uses any sensitive data however there is bias in the data on the basis of race and gender
+__Risks and harms__: There is a risk of relating the race and gender with the salary which can cause bias results towards prediction of salaries such as black females are high likely to be predicted under 50K salary than white males.
 
 ## Caveats and Recommendations
 
